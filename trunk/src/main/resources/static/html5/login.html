@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>登录</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="../css/signin.css"/>
+    <!-- In-document CSS -->
+    <style>
+        /* ... */
+    </style>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<div id="app">
+    <div class="container">
+        <div class="form-signin">
+            <span id="message">{{ msg | json }}</span>
+        </div>
+    </div>
+    <div class="container">
+        <form class="form-signin">
+            <h2 class="form-signin-heading">Please sign in</h2>
+            <label for="inputEmail" class="sr-only">Email address</label>
+            <input type="email" id="inputEmail" v-model="loginModel.email" class="form-control" placeholder="Email address" required autofocus>
+            <label for="inputPassword" class="sr-only">Password</label>
+            <input type="password" id="inputPassword" v-model="loginModel.password" class="form-control" placeholder="Password" required>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" value="remember-me"> Remember me
+                </label>
+            </div>
+            <button  class="btn btn-lg btn-primary btn-block" type="submit" @click="login">Sign in</button>
+        </form>
+
+    </div> <!-- /container -->
+</div>
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!-- vue js -->
+<script src="https://cdn.bootcss.com/vue/2.4.0/vue.min.js"></script>
+<!-- vue-resource js -->
+<script src="https://cdn.bootcss.com/vue-resource/1.3.4/vue-resource.min.js"></script>
+<!-- vue-router js -->
+<script src="https://cdn.bootcss.com/vue-router/2.7.0/vue-router.min.js"></script>
+
+<script>
+    Vue.http.options.emulateJSON = true
+    Vue.http.options.root = 'http://localhost:8080/'
+
+    var demo = new Vue({
+        el: '#app',
+        data: {
+            loginUrl: 'user/login',
+            logoutUrl: 'user/logout',
+            loginModel: {
+                email: '',
+                password: '',
+                grant_type: 'password'
+            },
+            msg: '',
+            userName: ''
+        },
+
+        ready: function () {
+            this.userName = sessionStorage.getItem('userName')
+        },
+        methods: {
+            login: function () {
+
+                this.$http.post(this.loginUrl, this.loginModel)
+                        .then((response) => {
+                    var body = response.bodyText;
+                if(body!="failure"){
+                    this.msg = '登录成功！'
+                    this.userName = body.userName
+
+                    sessionStorage.setItem('accessToken', body)
+                    window.location.href='/html5/admin/home.html';
+                }else{
+                    this.msg = '登录失败！'
+                }
+            }).catch(this.requestError)
+    },
+    requestError: function (response) {
+        this.msg = response.json()
+    }
+    }
+    })
+</script>
+</body>
+</html>

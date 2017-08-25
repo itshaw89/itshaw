@@ -1,0 +1,44 @@
+server:
+  port: 8080
+
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    hibernate:
+      dialect: org.hibernate.dialect.H2Dialect
+      ddl-auto: update #create    #update
+  datasource:
+    url: jdbc:h2:file:~/.h2/gatewaydb
+    username: sa
+    password: sa
+    driverClass: org.h2.Driver
+    connectionProperties: druid.stat.mergeSql=false;druid.stat.slowSqlMillis=5000
+    filters: stat,log4j
+    initialSize: 5
+    maxActive: 20
+    maxPoolPreparedStatementPerConnectionSize: 20
+    maxWait: 60000
+    minEvictableIdleTimeMillis: 300000
+    minIdle: 5
+    poolPreparedStatements: true
+    testOnBorrow: false
+    testOnReturn: false
+    testWhileIdle: true
+    timeBetweenEvictionRunsMillis: 60000
+    type: com.alibaba.druid.pool.DruidDataSource
+    useGlobalDataSourceStat: true
+    validationQuery: SELECT * FROM INFORMATION_SCHEMA.TABLES
+  h2:
+    console:
+      settings:
+        web-allow-others: true
+      path: /h2-console
+      enabled: true
+  cache:
+    cache-names: guavaDemo
+    guava.spec: maximumSize=500,expireAfterWrite=2m
+
+logging:
+  level:
+    root: INFO #DEBUG
